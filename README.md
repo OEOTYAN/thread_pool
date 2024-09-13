@@ -1,2 +1,2 @@
 # thread_pool
-a simple thread pool
+a simple header-only thread pool
