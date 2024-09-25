@@ -5,15 +5,12 @@
 #include <semaphore>
 #include <thread>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 #include "concurrentqueue.h"
 
 namespace oeo {
-
-struct default_thread_init {
-    constexpr void operator()(auto&&) const {}
-};
 
 struct default_task_invoke {
     template <class F>
@@ -22,7 +19,7 @@ struct default_task_invoke {
     }
 };
 
-template <class Task = std::function<void()>, class Init = default_thread_init, class Invoke = default_task_invoke>
+template <class Task = std::function<void()>, class Init = std::identity, class Invoke = default_task_invoke>
 class thread_pool {
     using queue_type = moodycamel::ConcurrentQueue<Task>;
     using token_type = typename queue_type::consumer_token_t;
@@ -47,7 +44,7 @@ public:
         workers.reserve(threads);
         for (size_t i = 0; i < threads; ++i) {
             workers.emplace_back([this, i] {
-                initer(i);
+                (void)initer(i);
                 token_type token{tasks};
                 for (;;) {
                     Task task;
