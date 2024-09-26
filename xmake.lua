@@ -1,6 +1,6 @@
 add_repositories("oeo-repo https://github.com/OEOTYAN/xmake-repo.git")
 
-add_requires("concurrentqueue v1.0.4")
+add_requires("concurrentqueue")
 
 target("thread_pool")
     set_kind("headeronly")
